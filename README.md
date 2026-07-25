@@ -6,7 +6,7 @@ This is the full-stack web application project for Team 14 (WDD 430).
 - Miguel Ramirez
 - Stephen Sanders
 - Yayra Khayat
-- Prayer Marangwanda
+- Dennis Kwadwo Awuah
 
 ## Getting Started
 
