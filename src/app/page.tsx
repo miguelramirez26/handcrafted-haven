@@ -66,12 +66,12 @@ export default function Home() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-stone-200 border border-stone-200">
           {[
-            { emoji: "🏺", bg: "bg-amber-50", name: "Hand-thrown vase", seller: "Elena M. · Ceramics", price: "$48", stars: "★★★★★" },
-            { emoji: "📿", bg: "bg-violet-50", name: "Silver necklace", seller: "Yayra K. · Jewelry", price: "$72", stars: "★★★★☆" },
-            { emoji: "🧺", bg: "bg-green-50", name: "Woven basket", seller: "Prayer M. · Textiles", price: "$35", stars: "★★★★★" },
-            { emoji: "🪵", bg: "bg-orange-50", name: "Oak cutting board", seller: "Stephen S. · Woodwork", price: "$60", stars: "★★★★★" },
+            { id: "1", emoji: "🏺", bg: "bg-amber-50", name: "Hand-thrown vase", seller: "Elena M. · Ceramics", price: "$48", stars: "★★★★★" },
+            { id: "2", emoji: "📿", bg: "bg-violet-50", name: "Silver necklace", seller: "Yayra K. · Jewelry", price: "$72", stars: "★★★★☆" },
+            { id: "3", emoji: "🧺", bg: "bg-green-50", name: "Woven basket", seller: "Prayer M. · Textiles", price: "$35", stars: "★★★★★" },
+            { id: "4", emoji: "🪵", bg: "bg-orange-50", name: "Oak cutting board", seller: "Stephen S. · Woodwork", price: "$60", stars: "★★★★★" },
           ].map((p) => (
-            <div key={p.name} className="bg-stone-50">
+            <a href={`/product/${p.id}`} key={p.name} className="bg-stone-50 hover:opacity-80 transition-opacity">
               <div className={`h-28 flex items-center justify-center text-4xl ${p.bg}`}>{p.emoji}</div>
               <div className="p-4 border-t border-stone-200">
                 <div className="text-sm font-medium text-stone-900 mb-0.5">{p.name}</div>
@@ -81,7 +81,7 @@ export default function Home() {
                   <span className="text-amber-500 text-xs">{p.stars}</span>
                 </div>
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </section>
