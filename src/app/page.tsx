@@ -92,21 +92,19 @@ export default function Home() {
         <h2 className="font-merriweather text-xl text-stone-900 mb-5">Meet our artisans</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { initials: "EM", name: "Elena M.", craft: "Ceramics", bg: "bg-amber-100", text: "text-amber-800" },
-            { initials: "YK", name: "Yayra K.", craft: "Jewelry", bg: "bg-violet-100", text: "text-violet-800" },
-            { initials: "PM", name: "Prayer M.", craft: "Textiles", bg: "bg-green-100", text: "text-green-800" },
-            { initials: "SS", name: "Stephen S.", craft: "Woodwork", bg: "bg-orange-100", text: "text-orange-800" },
+            { id: "1", initials: "EM", name: "Elena M.", craft: "Ceramics", bg: "bg-amber-100", text: "text-amber-800" },
+            { id: "2", initials: "SS", name: "Stephen S.", craft: "Woodwork", bg: "bg-orange-100", text: "text-orange-800" },
+            { id: "3", initials: "DK", name: "Dennis K.", craft: "Woodwork", bg: "bg-green-100", text: "text-green-800" },
           ].map((a) => (
-            <div key={a.name} className="flex items-center gap-3 bg-white p-4 border border-stone-200">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${a.bg} ${a.text} shrink-0`}>
+              <a href={`/seller/${a.id}`} key={a.name} className="flex items-center gap-3 bg-white p-4 border border-stone-200 hover:opacity-80 transition-opacity">              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${a.bg} ${a.text} shrink-0`}>
                 {a.initials}
               </div>
-              <div>
-                <div className="text-sm font-medium text-stone-900">{a.name}</div>
-                <div className="text-xs text-stone-400 uppercase tracking-wide mt-0.5">{a.craft}</div>
-              </div>
-            </div>
-          ))}
+                <div>
+                  <div className="text-sm font-medium text-stone-900">{a.name}</div>
+                  <div className="text-xs text-stone-400 uppercase tracking-wide mt-0.5">{a.craft}</div>
+                </div>
+              </a>
+            ))}
         </div>
       </section>
 
