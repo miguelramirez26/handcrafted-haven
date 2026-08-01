@@ -1,3 +1,5 @@
+import Navbar from '@/app/navbar';
+
 const products = [
   {
     id: "1",
@@ -55,20 +57,7 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
 
   return (
     <main>
-      {/* NAVBAR */}
-      <nav className="bg-slate-800 px-8 py-4 flex justify-between items-center">
-        <a href="/" className="font-merriweather text-white text-lg">
-          Handcrafted <span className="text-yellow-300">Haven</span>
-        </a>
-        <div className="flex gap-7 text-slate-400 text-xs uppercase tracking-widest">
-          <a href="/" className="hover:text-white transition-colors">Shop</a>
-          <a href="#" className="hover:text-white transition-colors">Artisans</a>
-          <a href="#" className="hover:text-white transition-colors">About</a>
-        </div>
-        <button className="bg-amber-700 hover:bg-amber-800 text-white text-xs uppercase tracking-wider px-4 py-2 rounded transition-colors">
-          Sign in
-        </button>
-      </nav>
+      {<Navbar />}
 
       {/* BREADCRUMB */}
       <div className="px-8 py-3 bg-stone-100 border-b border-stone-200 text-xs text-stone-400 uppercase tracking-wider">
