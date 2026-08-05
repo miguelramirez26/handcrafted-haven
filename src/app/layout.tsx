@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Merriweather, Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "./navbar";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer"
 
 const merriweather = Merriweather({
   weight: ["400", "700"],
@@ -29,6 +30,7 @@ export default function RootLayout({
       <body className={`${merriweather.variable} ${inter.variable}`}>
         <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
   );

@@ -95,14 +95,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
-      {/* FOOTER */}
-      <footer className="bg-slate-800 px-8 py-6 flex justify-between items-center">
-        <span className="font-merriweather text-white text-sm">
-          Handcrafted <span className="text-yellow-300">Haven</span>
-        </span>
-        <span className="text-slate-500 text-xs tracking-wide">© 2026 Team 14 · WDD 430</span>
-      </footer>
     </main>
   );
 }

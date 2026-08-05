@@ -29,7 +29,7 @@ export default function ProductListingPage() {
   }, [maximumPrice, minimumPrice, selectedCategory]);
 
   return (
-    <main className="min-h-screen bg-stone-50">
+    <main className="bg-stone-50">
       <section className="bg-slate-800 px-8 py-12 text-white">
         <div className="mx-auto max-w-6xl">
           <p className="mb-3 text-xs uppercase tracking-widest text-yellow-300">Marketplace catalog</p>

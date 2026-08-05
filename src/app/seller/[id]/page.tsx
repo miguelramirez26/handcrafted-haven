@@ -70,21 +70,6 @@ export default async function SellerProfile({ params }: { params: Promise<{ id: 
 
     return (
         <main>
-            {/* NAVBAR */}
-            <nav className="bg-slate-800 px-8 py-4 flex justify-between items-center">
-                <a href="/" className="font-merriweather text-white text-lg">
-                    Handcrafted <span className="text-yellow-300">Haven</span>
-                </a>
-                <div className="flex gap-7 text-slate-400 text-xs uppercase tracking-widest">
-                    <a href="/" className="hover:text-white transition-colors">Shop</a>
-                    <a href="#" className="hover:text-white transition-colors">Artisans</a>
-                    <a href="#" className="hover:text-white transition-colors">About</a>
-                </div>
-                <button className="bg-amber-700 hover:bg-amber-800 text-white text-xs uppercase tracking-wider px-4 py-2 rounded transition-colors">
-                    Sign in
-                </button>
-            </nav>
-
             {/* BREADCRUMB */}
             <div className="px-8 py-3 bg-stone-100 border-b border-stone-200 text-xs text-stone-400 uppercase tracking-wider">
                 <a href="/" className="hover:text-amber-700 transition-colors">Home</a>
@@ -159,14 +144,6 @@ export default async function SellerProfile({ params }: { params: Promise<{ id: 
                     ))}
                 </div>
             </section>
-
-            {/* FOOTER */}
-            <footer className="bg-slate-800 px-8 py-6 flex justify-between items-center">
-                <span className="font-merriweather text-white text-sm">
-                    Handcrafted <span className="text-yellow-300">Haven</span>
-                </span>
-                <span className="text-slate-500 text-xs tracking-wide">© 2026 Team 14 · WDD 430</span>
-            </footer>
         </main>
     );
 }
