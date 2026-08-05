@@ -27,9 +27,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${merriweather.variable} ${inter.variable}`}>
+      <body className={`${merriweather.variable} ${inter.variable} flex flex-col min-h-screen`}>
         <Navbar />
-        {children}
+        <div className="flex-grow">
+          {children}
+        </div>
         <Footer />
       </body>
     </html>
