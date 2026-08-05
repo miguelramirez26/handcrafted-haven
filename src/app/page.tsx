@@ -1,21 +1,8 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <main>
-      {/* NAVBAR */}
-      <nav className="bg-slate-800 px-8 py-4 flex justify-between items-center">
-        <span className="font-merriweather text-white text-lg">
-          Handcrafted <span className="text-yellow-300">Haven</span>
-        </span>
-        <div className="flex gap-7 text-slate-400 text-xs uppercase tracking-widest">
-          <a href="#" className="hover:text-white transition-colors">Shop</a>
-          <a href="#" className="hover:text-white transition-colors">Artisans</a>
-          <a href="#" className="hover:text-white transition-colors">About</a>
-        </div>
-        <button className="bg-amber-700 hover:bg-amber-800 text-white text-xs uppercase tracking-wider px-4 py-2 rounded transition-colors">
-          Sign in
-        </button>
-      </nav>
-
       {/* HERO */}
       <section className="bg-slate-800 px-8 py-16">
         <p className="text-yellow-300 text-xs uppercase tracking-widest mb-5">✦ The artisan marketplace</p>
@@ -26,9 +13,9 @@ export default function Home() {
           Discover unique handmade treasures from talented artisans around the world. Every piece tells a story.
         </p>
         <div className="flex gap-3">
-          <button className="bg-amber-700 hover:bg-amber-800 text-white text-xs uppercase tracking-wider px-7 py-3 transition-colors">
+          <Link href="/product-listing" className="bg-amber-700 hover:bg-amber-800 text-white text-xs uppercase tracking-wider px-7 py-3 transition-colors">
             Shop now
-          </button>
+          </Link>
           <button className="border border-slate-500 hover:border-slate-300 text-white text-xs uppercase tracking-wider px-7 py-3 transition-colors">
             Become a seller
           </button>
@@ -71,7 +58,7 @@ export default function Home() {
             { id: "3", emoji: "🧺", bg: "bg-green-50", name: "Woven basket", seller: "Prayer M. · Textiles", price: "$35", stars: "★★★★★" },
             { id: "4", emoji: "🪵", bg: "bg-orange-50", name: "Oak cutting board", seller: "Stephen S. · Woodwork", price: "$60", stars: "★★★★★" },
           ].map((p) => (
-            <a href={`/product/${p.id}`} key={p.name} className="bg-stone-50 hover:opacity-80 transition-opacity">
+            <Link href={`/product/${p.id}`} key={p.name} className="bg-stone-50 hover:opacity-80 transition-opacity">
               <div className={`h-28 flex items-center justify-center text-4xl ${p.bg}`}>{p.emoji}</div>
               <div className="p-4 border-t border-stone-200">
                 <div className="text-sm font-medium text-stone-900 mb-0.5">{p.name}</div>
@@ -81,7 +68,7 @@ export default function Home() {
                   <span className="text-amber-500 text-xs">{p.stars}</span>
                 </div>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       </section>
@@ -96,15 +83,16 @@ export default function Home() {
             { id: "2", initials: "SS", name: "Stephen S.", craft: "Woodwork", bg: "bg-orange-100", text: "text-orange-800" },
             { id: "3", initials: "DK", name: "Dennis K.", craft: "Woodwork", bg: "bg-green-100", text: "text-green-800" },
           ].map((a) => (
-              <a href={`/seller/${a.id}`} key={a.name} className="flex items-center gap-3 bg-white p-4 border border-stone-200 hover:opacity-80 transition-opacity">              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${a.bg} ${a.text} shrink-0`}>
+            <Link href={`/seller/${a.id}`} key={a.name} className="flex items-center gap-3 bg-white p-4 border border-stone-200 hover:opacity-80 transition-opacity">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${a.bg} ${a.text} shrink-0`}>
                 {a.initials}
               </div>
-                <div>
-                  <div className="text-sm font-medium text-stone-900">{a.name}</div>
-                  <div className="text-xs text-stone-400 uppercase tracking-wide mt-0.5">{a.craft}</div>
-                </div>
-              </a>
-            ))}
+              <div>
+                <div className="text-sm font-medium text-stone-900">{a.name}</div>
+                <div className="text-xs text-stone-400 uppercase tracking-wide mt-0.5">{a.craft}</div>
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
