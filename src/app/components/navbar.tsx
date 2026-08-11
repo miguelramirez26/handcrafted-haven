@@ -46,7 +46,7 @@ export default function Navbar() {
       <Link href="/" className="font-merriweather text-white text-lg">
         Handcrafted <span className="text-yellow-300">Haven</span>
       </Link>
-      
+
       <div className="flex gap-7 text-slate-400 text-xs uppercase tracking-widest">
         <Link href="/product-listing" className="hover:text-white transition-colors">Shop</Link>
         <Link href="/seller" className="hover:text-white transition-colors">Artisans</Link>
@@ -54,17 +54,15 @@ export default function Navbar() {
       </div>
 
       {user ? (
-        <button 
+        <button
           onClick={handleLogout}
-          className="bg-red-700 hover:bg-red-800 text-white text-xs uppercase tracking-wider px-4 py-2 rounded transition-colors"
+          className="bg-red-700 hover:bg-red-800 text-white text-xs uppercase tracking-wider px-4 py-2 rounded transition-colors cursor-pointer"
         >
           Log Out
         </button>
       ) : (
-        <Link href="/login">
-          <button className="bg-amber-700 hover:bg-amber-800 text-white text-xs uppercase tracking-wider px-4 py-2 rounded transition-colors">
-            Sign in
-          </button>
+        <Link href="/login" className="bg-amber-700 hover:bg-amber-800 text-white text-xs uppercase tracking-wider px-4 py-2 rounded transition-colors">
+          Sign in
         </Link>
       )}
     </nav>

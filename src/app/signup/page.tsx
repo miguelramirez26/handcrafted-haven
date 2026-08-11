@@ -87,7 +87,7 @@ export default function SignupPage() {
             <textarea name="bio" rows={3} value={formData.bio} onChange={handleChange} placeholder="Tell us about your craft..." className="w-full border border-stone-300 px-3 py-2 outline-none focus:border-amber-700 bg-white text-stone-950 resize-none" />
           </div>
 
-          <button type="submit" disabled={loading} className="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-2 transition-colors disabled:bg-slate-400">
+          <button type="submit" disabled={loading} className="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-2 transition-colors disabled:bg-slate-400 cursor-pointer">
             {loading ? "Creating Account..." : "Register Account"}
           </button>
         </form>

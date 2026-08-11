@@ -93,10 +93,11 @@ export default function DashboardPage() {
             <p className="text-sm text-stone-500 mt-2">Manage your handcrafted shop inventory and listings.</p>
           </div>
           <div>
-            <Link href="/dashboard/new">
-              <button className="bg-slate-800 hover:bg-slate-900 text-white font-medium px-4 py-2 text-sm transition-colors shadow-sm">
-                + Add New Product
-              </button>
+            <Link
+              href="/dashboard/new"
+              className="bg-slate-800 hover:bg-slate-900 text-white font-medium px-4 py-2 text-sm transition-colors shadow-sm"
+            >
+              + Add New Product
             </Link>
           </div>
         </div>
@@ -138,7 +139,7 @@ export default function DashboardPage() {
                         <button className="text-stone-500 hover:text-amber-700 font-medium transition-colors">
                           Edit
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleDelete(product.id)}
                           className="text-red-500 hover:text-red-700 font-medium transition-colors"
                         >

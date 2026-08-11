@@ -113,10 +113,10 @@ export default function NewProductPage() {
           </div>
 
           <div className="flex gap-4 pt-2">
-            <button type="button" onClick={() => router.push("/dashboard")} className="w-1/2 border border-stone-300 hover:bg-stone-50 text-stone-700 font-medium py-2 transition-colors text-sm text-center">
+            <button type="button" onClick={() => router.push("/dashboard")} className="w-1/2 border border-stone-300 hover:bg-stone-50 text-stone-700 font-medium py-2 transition-colors text-sm text-center cursor-pointer">
               Cancel
             </button>
-            <button type="submit" disabled={loading} className="w-1/2 bg-slate-800 hover:bg-slate-900 text-white font-medium py-2 transition-colors disabled:bg-slate-400 text-sm">
+            <button type="submit" disabled={loading} className="w-1/2 bg-slate-800 hover:bg-slate-900 text-white font-medium py-2 transition-colors disabled:bg-slate-400 text-sm cursor-pointer">
               {loading ? "Publishing..." : "Publish Product"}
             </button>
           </div>
