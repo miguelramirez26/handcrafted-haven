@@ -48,7 +48,7 @@ export default function DashboardPage() {
           detail: { name: activeUser.name, role: "artisan" } 
         }));
 
-        const productsRes = await fetch("/api/products");
+        const productsRes = await fetch("/api/products?seller=true");
         const productsData = await productsRes.json();
 
         if (!productsRes.ok) {

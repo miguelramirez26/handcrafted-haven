@@ -32,16 +32,24 @@ export async function GET(request: Request) {
     const client = await clientPromise;
     const db = client.db("handcrafted_haven");
 
-    // 1. REAL-WORLD PRODUCTION STANDARDS: Extract search parameter from url query string
     const { searchParams } = new URL(request.url);
     const searchQuery = searchParams.get("search") || "";
+    const sellerOnly = searchParams.get("seller") === "true";
 
-    // 2. Perform server-side filtering using case-insensitive MongoDB Regex targeting the name field
-    const query = searchQuery 
-      ? { name: { $regex: searchQuery, $options: "i" } } 
+    let query: Record<string, unknown> = searchQuery
+      ? { name: { $regex: searchQuery, $options: "i" } }
       : {};
 
-    // 3. Request ONLY matching documents from MongoDB Atlas, saving massive bandwidth
+    // Filter by session user when request comes from the dashboard
+    if (sellerOnly) {
+      const cookieStore = await cookies();
+      const sessionCookie = cookieStore.get("session");
+      if (sessionCookie) {
+        const currentUser = JSON.parse(sessionCookie.value);
+        query = { ...query, sellerId: currentUser.id };
+      }
+    }
+
     const productsCursor = await db.collection("products").find(query).toArray();
 
     const products = productsCursor.map((doc) => ({

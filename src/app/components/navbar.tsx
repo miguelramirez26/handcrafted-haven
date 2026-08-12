@@ -14,7 +14,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [user, setUser] = useState<UserSession | null>(null);
-  
+
   // State to handle the local input value for the search bar
   const [search, setSearch] = useState(searchParams.get("search") || "");
 
@@ -84,8 +84,8 @@ export default function Navbar() {
           placeholder="Search products..."
           className="w-full bg-slate-700 text-white placeholder-slate-400 text-xs px-3 py-2 rounded-l border border-slate-600 outline-none focus:border-amber-700 transition-colors"
         />
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           className="bg-amber-700 hover:bg-amber-800 text-white text-xs px-4 py-2 rounded-r uppercase tracking-wider font-medium transition-colors cursor-pointer"
         >
           Search
@@ -96,7 +96,13 @@ export default function Navbar() {
         <Link href="/product-listing" className="hover:text-white transition-colors">Shop</Link>
         <Link href="/seller" className="hover:text-white transition-colors">Artisans</Link>
         <Link href="/about" className="hover:text-white transition-colors">About</Link>
-        
+
+        {user && user.role === "artisan" && (
+          <Link href="/dashboard" className="hover:text-white transition-colors">
+            Dashboard
+          </Link>
+        )}
+
         {user ? (
           <button
             onClick={handleLogout}
