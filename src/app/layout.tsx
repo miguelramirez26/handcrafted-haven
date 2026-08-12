@@ -3,6 +3,7 @@ import { Merriweather, Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer"
+import { Suspense } from "react";
 
 const merriweather = Merriweather({
   weight: ["400", "700"],
@@ -28,7 +29,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${merriweather.variable} ${inter.variable} flex flex-col min-h-screen`}>
-        <Navbar />
+        <Suspense fallback={null}>
+          <Navbar />
+        </Suspense>
         <div className="flex-grow">
           {children}
         </div>
