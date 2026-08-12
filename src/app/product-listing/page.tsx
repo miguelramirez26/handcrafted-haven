@@ -2,20 +2,55 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FormEvent, useMemo, useState } from "react";
-import { products } from "../data/product";
+import { useEffect, useMemo, useState } from "react";
+import type { Product } from "@/types/product";
+// import { products } from "../data/product";
+import Navigation from "@/app/components/navigation";
 
-type Product = (typeof products)[number] & { imageUrl?: string };
+
+// type Product = (typeof products)[number] & { imageUrl?: string };
 
 const categories = ["Ceramics", "Jewelry", "Textiles", "Woodwork", "Art"];
 
 export default function ProductListingPage() {
-  const [catalog, setCatalog] = useState<Product[]>(products);
+  const [catalog, setCatalog] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [minimumPrice, setMinimumPrice] = useState("");
   const [maximumPrice, setMaximumPrice] = useState("");
   const [imagePreview, setImagePreview] = useState("");
   const [formMessage, setFormMessage] = useState("");
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await fetch("/api/products");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
+
+        const data = await response.json();
+
+        if (!Array.isArray(data)) {
+          throw new Error("Products response is not an array");
+        }
+
+      setCatalog(data);
+    } catch (error) {
+      console.error(error);
+      setError("Unable to Load Products. Please try again later.")
+    } finally {
+      setLoading(false);
+    }
+  }
+
+    fetchProducts();
+  }, []);
 
   const filteredProducts = useMemo(() => {
     const minimum = Number(minimumPrice);
@@ -36,7 +71,7 @@ export default function ProductListingPage() {
     setImagePreview(image ? URL.createObjectURL(image) : "");
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const name = String(formData.get("name") ?? "").trim();
@@ -57,7 +92,7 @@ export default function ProductListingPage() {
       name,
       seller,
       craft,
-      price,
+      price: Number(price),
       stars: 0,
       description,
       details: ["New artisan listing"],
@@ -72,17 +107,7 @@ export default function ProductListingPage() {
 
   return (
     <main className="min-h-screen bg-stone-50">
-      <nav className="flex items-center justify-between bg-slate-800 px-8 py-4">
-        <Link href="/" className="font-merriweather text-lg text-white">
-          Handcrafted <span className="text-yellow-300">Haven</span>
-        </Link>
-        <div className="flex gap-7 text-xs uppercase tracking-widest text-slate-400">
-          <Link href="/product-listing" className="text-white transition-colors hover:text-yellow-300">
-            Shop
-          </Link>
-          <a href="#sell" className="transition-colors hover:text-white">Sell</a>
-        </div>
-      </nav>
+      <Navigation />
 
       <section className="bg-slate-800 px-8 py-12 text-white">
         <div className="mx-auto max-w-6xl">
