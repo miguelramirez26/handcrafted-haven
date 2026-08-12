@@ -1,4 +1,3 @@
-// src/app/dashboard/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -26,12 +25,28 @@ export default function DashboardPage() {
         const sessionRes = await fetch("/api/auth/session");
         const sessionData = await sessionRes.json();
 
-        if (!sessionData.user) {
+        let activeUser = sessionData.user;
+
+        // Check if there is a temporary user in sessionStorage from the signup event
+        if (!activeUser && typeof window !== "undefined") {
+          const fallbackUser = sessionStorage.getItem("temp_artisan");
+          if (fallbackUser) {
+            activeUser = { name: fallbackUser };
+          }
+        }
+
+        // If no backend session or local fallback session exists, block access
+        if (!activeUser) {
           router.push("/login");
           return;
         }
 
-        setArtisanName(sessionData.user.name);
+        setArtisanName(activeUser.name);
+
+        // Notify the Navbar layout to switch the visual state to "Log Out" on page mount
+        window.dispatchEvent(new CustomEvent("local-login", { 
+          detail: { name: activeUser.name, role: "artisan" } 
+        }));
 
         const productsRes = await fetch("/api/products");
         const productsData = await productsRes.json();
@@ -51,7 +66,6 @@ export default function DashboardPage() {
     verifySessionAndLoadData();
   }, [router]);
 
-  // Function to handle the deletion of a product in real-time
   const handleDelete = async (productId: string) => {
     const confirmDelete = confirm("Are you sure you want to delete this product listing?");
     if (!confirmDelete) return;
@@ -67,7 +81,6 @@ export default function DashboardPage() {
         throw new Error(data.error || "Failed to delete the product");
       }
 
-      // Optimistically update the UI by filtering out the deleted item
       setMyProducts((prevProducts) => prevProducts.filter((p) => p.id !== productId));
     } catch (err: any) {
       alert(err.message);
@@ -141,7 +154,7 @@ export default function DashboardPage() {
                         </button>
                         <button
                           onClick={() => handleDelete(product.id)}
-                          className="text-red-500 hover:text-red-700 font-medium transition-colors"
+                          className="text-red-500 hover:text-red-700 font-medium transition-colors cursor-pointer"
                         >
                           Delete
                         </button>

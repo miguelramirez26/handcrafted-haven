@@ -1,4 +1,3 @@
-// src/app/components/navbar.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -15,7 +14,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const [user, setUser] = useState<UserSession | null>(null);
 
-  // Checks the active backend session without altering any layout element
+  // Checks the active backend session and listens to local login events
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -26,7 +25,15 @@ export default function Navbar() {
         setUser(null);
       }
     };
+
+    const handleLocalLogin = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      setUser(customEvent.detail);
+    };
+
     checkAuth();
+    window.addEventListener("local-login", handleLocalLogin);
+    return () => window.removeEventListener("local-login", handleLocalLogin);
   }, [pathname]);
 
   const handleLogout = async () => {

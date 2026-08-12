@@ -1,4 +1,3 @@
-// src/app/signup/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -38,8 +37,16 @@ export default function SignupPage() {
         throw new Error(data.error || "Something went wrong");
       }
 
-      // If successful, redirect to the login page or product listing
-      router.push("/product-listing");
+      // Notify the Navbar to immediately switch to "Log Out"
+      window.dispatchEvent(new CustomEvent("local-login", { 
+        detail: { name: formData.name, role: "artisan" } 
+      }));
+
+      // Store the session temporarily to bypass dashboard blocking
+      sessionStorage.setItem("temp_artisan", formData.name);
+
+      // Redirect directly to the dashboard path
+      router.push("/dashboard");
     } catch (err: any) {
       setError(err.message);
     } finally {
