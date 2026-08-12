@@ -1,6 +1,39 @@
 import Link from "next/link";
+import clientPromise from "../lib/mongodb";
 
-export default function Home() {
+async function getFeaturedProducts() {
+  const client = await clientPromise;
+  const db = client.db("handcrafted_haven");
+  const products = await db.collection("products").find({}).limit(4).toArray();
+  return products.map((p) => ({
+    id: p._id.toString(),
+    emoji: p.emoji || "📦",
+    bg: p.bg || "bg-stone-50",
+    name: p.name,
+    seller: `${p.sellerName} · ${p.craft}`,
+    price: `$${p.price}`,
+    stars: p.stars ? "★".repeat(Math.round(p.stars)) + "☆".repeat(5 - Math.round(p.stars)) : "New",
+  }));
+}
+
+async function getFeaturedArtisans() {
+  const client = await clientPromise;
+  const db = client.db("handcrafted_haven");
+  const users = await db.collection("users").find({}).limit(3).toArray();
+  return users.map((u) => ({
+    id: u._id.toString(),
+    initials: u.name.slice(0, 2).toUpperCase(),
+    name: u.name,
+    craft: u.shopName || "Artisan",
+    bg: "bg-amber-100",
+    text: "text-amber-800",
+  }));
+}
+
+export default async function Home() {
+  const products = await getFeaturedProducts();
+  const artisans = await getFeaturedArtisans();
+
   return (
     <main>
       {/* HERO */}
@@ -17,9 +50,9 @@ export default function Home() {
             <Link href="/product-listing" className="bg-amber-700 hover:bg-amber-800 text-white text-xs uppercase tracking-wider px-7 py-3 transition-colors">
               Shop now
             </Link>
-            <button className="border border-slate-500 hover:border-slate-300 text-white text-xs uppercase tracking-wider px-7 py-3 transition-colors">
+            <Link href="/signup" className="border border-slate-500 hover:border-slate-300 text-white text-xs uppercase tracking-wider px-7 py-3 transition-colors">
               Become a seller
-            </button>
+            </Link>
           </div>
           <div className="flex gap-10 mt-12 pt-8 border-t border-slate-700">
             {[["2,400+", "Artisans"], ["18k+", "Products"], ["94%", "5-star reviews"]].map(([num, label]) => (
@@ -53,13 +86,8 @@ export default function Home() {
             ))}
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-stone-200 border border-stone-200">
-            {[
-              { id: "1", emoji: "🏺", bg: "bg-amber-50", name: "Hand-thrown vase", seller: "Elena M. · Ceramics", price: "$48", stars: "★★★★★" },
-              { id: "2", emoji: "📿", bg: "bg-violet-50", name: "Silver necklace", seller: "Yayra K. · Jewelry", price: "$72", stars: "★★★★☆" },
-              { id: "3", emoji: "🧺", bg: "bg-green-50", name: "Woven basket", seller: "Prayer M. · Textiles", price: "$35", stars: "★★★★★" },
-              { id: "4", emoji: "🪵", bg: "bg-orange-50", name: "Oak cutting board", seller: "Stephen S. · Woodwork", price: "$60", stars: "★★★★★" },
-            ].map((p) => (
-              <Link href={`/product/${p.id}`} key={p.name} className="bg-stone-50 hover:opacity-80 transition-opacity">
+            {products.map((p) => (
+              <Link href={`/product/${p.id}`} key={p.id} className="bg-stone-50 hover:opacity-80 transition-opacity">
                 <div className={`h-28 flex items-center justify-center text-4xl ${p.bg}`}>{p.emoji}</div>
                 <div className="p-4 border-t border-stone-200">
                   <div className="text-sm font-medium text-stone-900 mb-0.5">{p.name}</div>
@@ -81,12 +109,8 @@ export default function Home() {
           <p className="text-amber-700 text-xs uppercase tracking-widest mb-2">✦ Featured</p>
           <h2 className="font-merriweather text-xl text-stone-900 mb-5">Meet our artisans</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {[
-              { id: "1", initials: "EM", name: "Elena M.", craft: "Ceramics", bg: "bg-amber-100", text: "text-amber-800" },
-              { id: "2", initials: "SS", name: "Stephen S.", craft: "Woodwork", bg: "bg-orange-100", text: "text-orange-800" },
-              { id: "3", initials: "DK", name: "Dennis K.", craft: "Woodwork", bg: "bg-green-100", text: "text-green-800" },
-            ].map((a) => (
-              <Link href={`/seller/${a.id}`} key={a.name} className="flex items-center gap-3 bg-white p-4 border border-stone-200 hover:opacity-80 transition-opacity">
+            {artisans.map((a) => (
+              <Link href={`/seller/${a.id}`} key={a.id} className="flex items-center gap-3 bg-white p-4 border border-stone-200 hover:opacity-80 transition-opacity">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${a.bg} ${a.text} shrink-0`}>
                   {a.initials}
                 </div>

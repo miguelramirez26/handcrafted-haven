@@ -1,77 +1,47 @@
-// const products = [
-//   {
-//     id: "1",
-//     emoji: "🏺",
-//     bg: "bg-amber-50",
-//     name: "Hand-thrown vase",
-//     seller: "Elena M.",
-//     craft: "Ceramics",
-//     price: "$48",
-//     stars: 5,
-//     description: "A beautifully hand-thrown ceramic vase, crafted with care using traditional techniques. Each piece is unique, with subtle variations in glaze and form that make it truly one of a kind.",
-//     details: ["Height: 12 inches", "Glazed stoneware", "Food safe", "Handwash recommended"],
-//   },
-//   {
-//     id: "2",
-//     emoji: "📿",
-//     bg: "bg-violet-50",
-//     name: "Silver necklace",
-//     seller: "Yayra K.",
-//     craft: "Jewelry",
-//     price: "$72",
-//     stars: 4,
-//     description: "A delicate handcrafted silver necklace with an elegant pendant. Made using traditional silversmithing techniques passed down through generations.",
-//     details: ["Sterling silver 925", "Chain length: 18 inches", "Pendant: 1.2 inches", "Comes in gift box"],
-//   },
-//   {
-//     id: "3",
-//     emoji: "🧺",
-//     bg: "bg-green-50",
-//     name: "Woven basket",
-//     seller: "Prayer M.",
-//     craft: "Textiles",
-//     price: "$35",
-//     stars: 5,
-//     description: "A handwoven basket made from sustainably sourced natural fibers. Perfect for storage, display, or as a thoughtful gift.",
-//     details: ["Natural seagrass", "Diameter: 14 inches", "Height: 10 inches", "Eco-friendly materials"],
-//   },
-//   {
-//     id: "4",
-//     emoji: "🪵",
-//     bg: "bg-orange-50",
-//     name: "Oak cutting board",
-//     seller: "Stephen S.",
-//     craft: "Woodwork",
-//     price: "$60",
-//     stars: 5,
-//     description: "A solid oak cutting board crafted with precision and finished with food-safe oil. Built to last a lifetime with proper care.",
-//     details: ["Solid white oak", "16\" x 12\" x 1\"", "Food-safe finish", "Hand wash only"],
-//   },
-// ];
+import { ObjectId } from "mongodb";
+import clientPromise from "@/lib/mongodb";
 
-import { products } from "@/app/data/product";
+async function getProduct(id: string) {
+  try {
+    const client = await clientPromise;
+    const db = client.db("handcrafted_haven");
+    
+    const product = await db.collection("products").findOne({ _id: new ObjectId(id) });
+    if (!product) return null;
+
+    return {
+      id: product._id.toString(),
+      emoji: product.emoji || "📦",
+      bg: product.bg || "bg-stone-50",
+      name: product.name,
+      seller: product.sellerName,
+      craft: product.craft,
+      price: `$${product.price}`,
+      stars: product.stars || 5,
+      description: product.description || "",
+      details: product.details || [],
+    };
+  } catch (error) {
+    return null;
+  }
+}
 
 export default async function ProductDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const product = products.find((p) => p.id === id) || products[0];
+  const product = await getProduct(id);
+
+  if (!product) {
+    return (
+      <main className="px-8 py-12 text-center">
+        <h1 className="text-xl font-bold text-stone-800">Product not found</h1>
+        <p className="text-stone-500 text-sm mt-2">The ID "{id}" does not match any product.</p>
+        <a href="/" className="text-amber-700 underline text-sm mt-4 inline-block">Back to home</a>
+      </main>
+    );
+  }
 
   return (
     <main>
-      {/* NAVBAR */}
-      <nav className="bg-slate-800 px-8 py-4 flex justify-between items-center">
-        <a href="/" className="font-merriweather text-white text-lg">
-          Handcrafted <span className="text-yellow-300">Haven</span>
-        </a>
-        <div className="flex gap-7 text-slate-400 text-xs uppercase tracking-widest">
-          <a href="/" className="hover:text-white transition-colors">Shop</a>
-          <a href="#" className="hover:text-white transition-colors">Artisans</a>
-          <a href="#" className="hover:text-white transition-colors">About</a>
-        </div>
-        <button className="bg-amber-700 hover:bg-amber-800 text-white text-xs uppercase tracking-wider px-4 py-2 rounded transition-colors">
-          Sign in
-        </button>
-      </nav>
-
       {/* BREADCRUMB */}
       <div className="px-8 py-3 bg-stone-100 border-b border-stone-200 text-xs text-stone-400 uppercase tracking-wider">
         <a href="/" className="hover:text-amber-700 transition-colors">Home</a>
@@ -106,7 +76,7 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
             <p className="text-stone-500 text-sm leading-relaxed mb-6">{product.description}</p>
 
             <ul className="mb-8 space-y-1">
-              {product.details.map((d) => (
+              {product.details.map((d: string) => (
                 <li key={d} className="text-xs text-stone-400 uppercase tracking-wide flex items-center gap-2">
                   <span className="text-amber-700">✦</span> {d}
                 </li>
