@@ -2,23 +2,74 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { products } from "../data/product";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 
-type Product = (typeof products)[number] & { imageUrl?: string };
+interface Product {
+  id: string;
+  name: string;
+  craft: string;
+  price: number;
+  description: string;
+  emoji: string;
+  bg: string;
+  stars: number;
+  sellerId: string;
+  sellerName: string;
+}
 
 const categories = ["Ceramics", "Jewelry", "Textiles", "Woodwork", "Art"];
 
 export default function ProductListingPage() {
+  const router = useRouter();
+  const [catalog, setCatalog] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [minimumPrice, setMinimumPrice] = useState("");
   const [maximumPrice, setMaximumPrice] = useState("");
 
+  // 1. Connect frontend hook to intercept global Navbar search state parameters
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
+
+  // 2. Fetch reactive database results every time the search string changes in the browser URL
+  useEffect(() => {
+    async function fetchInventory() {
+      try {
+        setLoading(true);
+        setError("");
+        
+        // Pass the query term down to the server-side filtered database route
+        const response = await fetch(`/api/products?search=${encodeURIComponent(searchQuery)}`);
+        if (!response.ok) {
+          throw new Error("Failed to download catalog dataset from database.");
+        }
+        
+        const data = await response.json();
+        if (data && Array.isArray(data.products)) {
+          setCatalog(data.products);
+        } else {
+          throw new Error("Unexpected catalog inventory payload format.");
+        }
+      } catch (err) {
+        console.error("Live marketplace load critical failure:", err);
+        setError("Unable to synchronize active inventory. Try again later.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchInventory();
+  }, [searchQuery]); // Essential: Re-runs the DB query seamlessly when searchQuery shifts
+
+  // 3. Client-side handling for immediate filters (Category and Price ranges)
   const filteredProducts = useMemo(() => {
     const minimum = Number(minimumPrice);
     const maximum = Number(maximumPrice);
 
-    return products.filter((product) => {
+    return catalog.filter((product) => {
       const price = Number(product.price);
       const matchesCategory = selectedCategory === "All" || product.craft === selectedCategory;
       const matchesMinimum = minimumPrice === "" || price >= minimum;
@@ -26,7 +77,7 @@ export default function ProductListingPage() {
 
       return matchesCategory && matchesMinimum && matchesMaximum;
     });
-  }, [maximumPrice, minimumPrice, selectedCategory]);
+  }, [catalog, maximumPrice, minimumPrice, selectedCategory]);
 
   return (
     <main className="bg-stone-50">
@@ -60,21 +111,32 @@ export default function ProductListingPage() {
                 <input id="maximum-price" type="number" min="0" value={maximumPrice} onChange={(e) => setMaximumPrice(e.target.value)} placeholder="Any" className="w-28 border border-stone-300 px-3 py-2 outline-none focus:border-amber-700" />
               </label>
             </div>
-            <p className="text-sm text-stone-500">{filteredProducts.length} {filteredProducts.length === 1 ? "item" : "items"} found</p>
+            <p className="text-sm text-stone-500">
+              {!loading && !error ? `${filteredProducts.length} ${filteredProducts.length === 1 ? "item" : "items"} found` : "---"}
+            </p>
           </div>
         </div>
 
-        {filteredProducts.length > 0 ? (
+        {/* Dynamic State Management Interface Render Layer */}
+        {loading ? (
+          <div className="text-center py-14 font-merriweather text-stone-500 text-lg">
+            Loading artisan catalog inventory...
+          </div>
+        ) : error ? (
+          <div className="text-center py-14 font-merriweather text-rose-600 text-lg">
+            {error}
+          </div>
+        ) : filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {filteredProducts.map((product) => (
               <Link href={`/product/${product.id}`} key={product.id} className="group overflow-hidden border border-stone-200 bg-white transition-shadow hover:shadow-md">
-                <div className={`relative flex h-48 items-center justify-center text-6xl ${product.bg}`}>
-                  {product.emoji}
+                <div className={`relative flex h-48 items-center justify-center text-6xl ${product.bg || "bg-stone-50"}`}>
+                  {product.emoji || "📦"}
                 </div>
                 <div className="p-5">
                   <p className="mb-2 text-xs uppercase tracking-wider text-amber-700">{product.craft}</p>
                   <h2 className="font-merriweather text-lg text-stone-900 group-hover:text-amber-700">{product.name}</h2>
-                  <p className="mt-1 text-xs uppercase tracking-wide text-stone-400">By {product.seller}</p>
+                  <p className="mt-1 text-xs uppercase tracking-wide text-stone-400">By {product.sellerName || "Unknown Artisan"}</p>
                   <p className="mt-4 line-clamp-3 text-sm leading-relaxed text-stone-500">{product.description}</p>
                   <div className="mt-5 flex items-center justify-between border-t border-stone-100 pt-4">
                     <span className="font-merriweather text-lg text-amber-700">${product.price}</span>
@@ -87,7 +149,10 @@ export default function ProductListingPage() {
         ) : (
           <div className="border border-dashed border-stone-300 bg-white px-6 py-14 text-center">
             <h2 className="font-merriweather text-xl text-stone-900">No products match those filters</h2>
-            <button onClick={() => { setSelectedCategory("All"); setMinimumPrice(""); setMaximumPrice(""); }} className="mt-5 text-xs uppercase tracking-wider text-amber-700 underline underline-offset-4">
+            <button 
+              onClick={() => { setSelectedCategory("All"); setMinimumPrice(""); setMaximumPrice(""); if(searchQuery) router.push("/product-listing"); }} 
+              className="mt-5 text-xs uppercase tracking-wider text-amber-700 underline underline-offset-4"
+            >
               Clear filters
             </button>
           </div>

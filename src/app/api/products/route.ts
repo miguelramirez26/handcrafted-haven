@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import clientPromise from "../../../lib/mongodb";
 import { cookies } from "next/headers";
 
+// Mapping categories to specific visual themes for random generation during creation
 const themeMap: Record<string, { emojis: string[]; bgs: string[] }> = {
   Ceramics: {
     emojis: ["🏺", "☕", "🥣", "🍽️"],
@@ -26,11 +27,22 @@ const themeMap: Record<string, { emojis: string[]; bgs: string[] }> = {
   }
 };
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const client = await clientPromise;
     const db = client.db("handcrafted_haven");
-    const productsCursor = await db.collection("products").find({}).toArray();
+
+    // 1. REAL-WORLD PRODUCTION STANDARDS: Extract search parameter from url query string
+    const { searchParams } = new URL(request.url);
+    const searchQuery = searchParams.get("search") || "";
+
+    // 2. Perform server-side filtering using case-insensitive MongoDB Regex targeting the name field
+    const query = searchQuery 
+      ? { name: { $regex: searchQuery, $options: "i" } } 
+      : {};
+
+    // 3. Request ONLY matching documents from MongoDB Atlas, saving massive bandwidth
+    const productsCursor = await db.collection("products").find(query).toArray();
 
     const products = productsCursor.map((doc) => ({
       id: doc._id.toString(),
