@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 interface Product {
@@ -20,7 +19,7 @@ interface Product {
 
 const categories = ["Ceramics", "Jewelry", "Textiles", "Woodwork", "Art"];
 
-export default function ProductListingPage() {
+function ProductListingContent() {
   const router = useRouter();
   const [catalog, setCatalog] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,23 +29,16 @@ export default function ProductListingPage() {
   const [minimumPrice, setMinimumPrice] = useState("");
   const [maximumPrice, setMaximumPrice] = useState("");
 
-  // 1. Connect frontend hook to intercept global Navbar search state parameters
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get("search") || "";
 
-  // 2. Fetch reactive database results every time the search string changes in the browser URL
   useEffect(() => {
     async function fetchInventory() {
       try {
         setLoading(true);
         setError("");
-        
-        // Pass the query term down to the server-side filtered database route
         const response = await fetch(`/api/products?search=${encodeURIComponent(searchQuery)}`);
-        if (!response.ok) {
-          throw new Error("Failed to download catalog dataset from database.");
-        }
-        
+        if (!response.ok) throw new Error("Failed to download catalog dataset from database.");
         const data = await response.json();
         if (data && Array.isArray(data.products)) {
           setCatalog(data.products);
@@ -60,21 +52,17 @@ export default function ProductListingPage() {
         setLoading(false);
       }
     }
-
     fetchInventory();
-  }, [searchQuery]); // Essential: Re-runs the DB query seamlessly when searchQuery shifts
+  }, [searchQuery]);
 
-  // 3. Client-side handling for immediate filters (Category and Price ranges)
   const filteredProducts = useMemo(() => {
     const minimum = Number(minimumPrice);
     const maximum = Number(maximumPrice);
-
     return catalog.filter((product) => {
       const price = Number(product.price);
       const matchesCategory = selectedCategory === "All" || product.craft === selectedCategory;
       const matchesMinimum = minimumPrice === "" || price >= minimum;
       const matchesMaximum = maximumPrice === "" || price <= maximum;
-
       return matchesCategory && matchesMinimum && matchesMaximum;
     });
   }, [catalog, maximumPrice, minimumPrice, selectedCategory]);
@@ -117,7 +105,6 @@ export default function ProductListingPage() {
           </div>
         </div>
 
-        {/* Dynamic State Management Interface Render Layer */}
         {loading ? (
           <div className="text-center py-14 font-merriweather text-stone-500 text-lg">
             Loading artisan catalog inventory...
@@ -149,8 +136,8 @@ export default function ProductListingPage() {
         ) : (
           <div className="border border-dashed border-stone-300 bg-white px-6 py-14 text-center">
             <h2 className="font-merriweather text-xl text-stone-900">No products match those filters</h2>
-            <button 
-              onClick={() => { setSelectedCategory("All"); setMinimumPrice(""); setMaximumPrice(""); if(searchQuery) router.push("/product-listing"); }} 
+            <button
+              onClick={() => { setSelectedCategory("All"); setMinimumPrice(""); setMaximumPrice(""); if (searchQuery) router.push("/product-listing"); }}
               className="mt-5 text-xs uppercase tracking-wider text-amber-700 underline underline-offset-4"
             >
               Clear filters
@@ -159,5 +146,13 @@ export default function ProductListingPage() {
         )}
       </section>
     </main>
+  );
+}
+
+export default function ProductListingPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-14 text-stone-500">Loading...</div>}>
+      <ProductListingContent />
+    </Suspense>
   );
 }
